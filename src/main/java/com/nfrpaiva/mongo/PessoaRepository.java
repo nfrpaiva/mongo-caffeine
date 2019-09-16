@@ -22,7 +22,7 @@ public interface PessoaRepository extends MongoRepository<Pessoa, String> {
 	<S extends Pessoa> S save(S entity);
 
 	@Override
-	@Cacheable(key = "#id")
+	@Cacheable(key = "#id", unless="#result == null")
 	Optional<Pessoa> findById(String id) ;
 	
 	
