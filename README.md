@@ -11,7 +11,7 @@ Utilizar [caffeine](https://github.com/ben-manes/caffeine) como cache.
 	<artifactId>caffeine</artifactId>
 </dependency>
 ```
-> Por se tratar de spring boot a versão do artefato esta disponível *out of the box*. Caso não esteja usando spring boot você pode encontrar a versão mais recente [aqui](https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine).
+> Por se tratar de spring boot a versão do artefato esta disponível *"out of the box"*. Caso não esteja usando spring boot você pode encontrar a versão mais recente [aqui](https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine).
 
 ## Exemplo configuração de bean de cache
 ```java
