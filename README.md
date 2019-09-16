@@ -1,6 +1,8 @@
-# Projeto - mongo-caffeine
+# Configuração de cache em memória com Caffeine
+
 ## Objetivo
-Configurar um cache com expiração e configuração indepentende em memória
+Utilizar[caffeine](https://github.com/ben-manes/caffeine) como cache.
+> MongoDB foi utilizado como banco de dados como banco de dados de referência
 
 ## Maven
 ```xml
