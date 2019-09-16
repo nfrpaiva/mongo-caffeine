@@ -31,7 +31,7 @@ public class MongoApplication {
 			stopWatch.start();
 			ExecutorService pool = Executors.newFixedThreadPool(10);
 			repository.deleteAll();
-			IntStream.rangeClosed(1, 100_000).boxed().forEach(i -> {
+			IntStream.rangeClosed(1, 100).boxed().forEach(i -> {
 				pool.execute(()->{
 					repository.save(new Pessoa(null, "Uma Pessoa " + i, new Date(),1.0, i % 2));
 				});
