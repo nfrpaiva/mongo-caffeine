@@ -33,7 +33,7 @@ public class MongoApplication {
 			repository.deleteAll();
 			IntStream.rangeClosed(1, 100).boxed().forEach(i -> {
 				pool.execute(()->{
-					repository.save(new Pessoa(null, "Uma Pessoa " + i, new Date(),1.0, i % 2));
+					repository.save(new Pessoa(null, "Uma Pessoa " + i, new Date(),1.0, i));
 				});
 			});
 			pool.shutdown();
