@@ -32,3 +32,4 @@ out/
 .vscode/
 /target
 /bin
+nohup.out
