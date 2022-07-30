@@ -2,7 +2,7 @@
 
 ## Objetivo
 Utilizar [caffeine](https://github.com/ben-manes/caffeine) como cache.
-> MongoDB foi utilizado como banco de dados como banco de dados de referência
+> MongoDB foi utilizado como banco de dados de referência
 
 ## Maven
 ```xml
