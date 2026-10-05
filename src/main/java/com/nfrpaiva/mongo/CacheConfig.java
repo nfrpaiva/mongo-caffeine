@@ -1,8 +1,7 @@
 package com.nfrpaiva.mongo;
 
-import java.util.ArrayList;
+import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -16,33 +15,24 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 
 @Configuration
 @EnableCaching
-public class CacheConfig{
+public class CacheConfig {
 
 	@Bean
 	public CacheManager caffeineCacheManager() {
-		List<CaffeineCache> caches = new ArrayList<>();
 		SimpleCacheManager manager = new SimpleCacheManager();
-		
-		Cache<Object, Object> pessoaCache = Caffeine
-			.newBuilder()
-			.expireAfterAccess(2, TimeUnit.MINUTES)
-			.maximumSize(10_000)
-			//.recordStats()
-			.build();
-		caches.add(new CaffeineCache("pessoa", pessoaCache, false));
-		
-		
-		
-		Cache<Object, Object> item = Caffeine
-			.newBuilder()
-			.expireAfterAccess(2, TimeUnit.MINUTES)
-			.maximumSize(10_000)
-			//.recordStats()
-			.build();
-		caches.add(new CaffeineCache("item", item, false));
-		
-		manager.setCaches(caches);
+		manager.setCaches(List.of(
+				new CaffeineCache("pessoa", buildCache(), false),
+				new CaffeineCache("item", buildCache(), false)));
 		return manager;
+	}
+
+	private static Cache<Object, Object> buildCache() {
+		return Caffeine
+			.newBuilder()
+			.expireAfterAccess(Duration.ofMinutes(2))
+			.maximumSize(10_000)
+			//.recordStats()
+			.build();
 	}
 
 }

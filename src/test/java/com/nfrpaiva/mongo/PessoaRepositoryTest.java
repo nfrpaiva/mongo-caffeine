@@ -1,28 +1,41 @@
 package com.nfrpaiva.mongo;
 
-import org.assertj.core.api.Assertions;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.cache.CacheManager;
+import org.springframework.context.annotation.Import;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
-public class PessoaRepositoryTest {
+@Import(TestcontainersConfiguration.class)
+class PessoaRepositoryTest {
 
-    @Autowired
-    private PessoaRepository repository;
+	@Autowired
+	private PessoaRepository repository;
 
-    @Test
-    public void testInsert() throws Exception {
+	@Autowired
+	private CacheManager cacheManager;
 
-        Pessoa p = new Pessoa();
-        p.setNome("Um nome");
-        Pessoa result = repository.save(p);
-        Assertions.assertThat(result.getNome()).isEqualTo("Um nome");
-        Assertions.assertThat(result.getId()).isNotNull();
+	@Test
+	void testInsert() {
+		Pessoa p = new Pessoa();
+		p.setNome("Um nome");
+		Pessoa result = repository.save(p);
+		assertThat(result.getNome()).isEqualTo("Um nome");
+		assertThat(result.getId()).isNotNull();
+	}
 
-    }
+	@Test
+	void saveColocaEntidadeNoCache() {
+		Pessoa p = new Pessoa();
+		p.setNome("Em cache");
+		Pessoa result = repository.save(p);
+		assertThat(cacheManager.getCache("pessoa").get(result.getId(), Pessoa.class))
+			.isNotNull()
+			.extracting(Pessoa::getNome)
+			.isEqualTo("Em cache");
+	}
 
 }
