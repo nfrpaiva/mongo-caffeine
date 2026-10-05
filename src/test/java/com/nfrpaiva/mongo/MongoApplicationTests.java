@@ -1,16 +1,15 @@
 package com.nfrpaiva.mongo;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.context.annotation.Import;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
-public class MongoApplicationTests {
+@Import(TestcontainersConfiguration.class)
+class MongoApplicationTests {
 
 	@Test
-	public void contextLoads() {
+	void contextLoads() {
 	}
 
 }

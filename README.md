@@ -4,6 +4,21 @@
 Utilizar [caffeine](https://github.com/ben-manes/caffeine) como cache.
 > MongoDB foi utilizado como banco de dados de referência
 
+## Requisitos
+- Java 25
+- Spring Boot 4.1
+- Caffeine 3.3
+- Docker (os testes sobem um MongoDB via [Testcontainers](https://testcontainers.com/))
+
+## Executando
+```bash
+# MongoDB local para a aplicação
+docker run -d --rm -p 27017:27017 mongo:8
+
+./mvnw spring-boot:run   # aplicação em http://localhost:8080/pessoa
+./mvnw verify            # testes (usam Testcontainers)
+```
+
 ## Maven
 ```xml
 <dependency>
@@ -16,29 +31,22 @@ Utilizar [caffeine](https://github.com/ben-manes/caffeine) como cache.
 ## Exemplo configuração de bean de cache
 ```java
 @Bean
-	public CacheManager caffeineCacheManager() {
-		List<CaffeineCache> caches = new ArrayList<>();
-		SimpleCacheManager manager = new SimpleCacheManager();
-		
-		Cache<Object, Object> pessoaCache = Caffeine
-			.newBuilder()
-			.expireAfterAccess(2, TimeUnit.MINUTES)
-			.maximumSize(10_000)
-			.recordStats()
-			.build();
-		caches.add(new CaffeineCache("pessoa", pessoaCache, false));
-		
-		Cache<Object, Object> item = Caffeine
-			.newBuilder()
-			.expireAfterAccess(2, TimeUnit.MINUTES)
-			.maximumSize(10_000)
-			.recordStats()
-			.build();
-		caches.add(new CaffeineCache("item", item, false));
-		
-		manager.setCaches(caches);
-		return manager;
-	}
+public CacheManager caffeineCacheManager() {
+	SimpleCacheManager manager = new SimpleCacheManager();
+	manager.setCaches(List.of(
+			new CaffeineCache("pessoa", buildCache(), false),
+			new CaffeineCache("item", buildCache(), false)));
+	return manager;
+}
+
+private static Cache<Object, Object> buildCache() {
+	return Caffeine
+		.newBuilder()
+		.expireAfterAccess(Duration.ofMinutes(2))
+		.maximumSize(10_000)
+		.recordStats()
+		.build();
+}
 ```
 
 ## Exemplo de configuração de cache utilizando MongoRepository
@@ -57,7 +65,7 @@ public interface PessoaRepository extends MongoRepository<Pessoa, String> {
 	<S extends Pessoa> S save(S entity);
 
 	@Override
-	@Cacheable(key = "#id")
+	@Cacheable(key = "#id", unless = "#result == null")
 	Optional<Pessoa> findById(String id) ;
 	
 }
@@ -76,9 +84,10 @@ logging.level.org.springframework.cache=trace
 @Scheduled(fixedDelay = 5000)
 public void checkStats() {
 	cacheManager.getCacheNames().forEach(name -> {
-		CaffeineCache cache = (CaffeineCache) cacheManager.getCache(name);
-		Cache<Object, Object> nativeCache = cache.getNativeCache();
-		logger.info("Cache {} - stats: {} - size {}", name nativeCache.stats(), nativeCache.estimatedSize());
+		if (cacheManager.getCache(name) instanceof CaffeineCache cache) {
+			Cache<Object, Object> nativeCache = cache.getNativeCache();
+			logger.info("Cache {} - stats: {} - size {}", name, nativeCache.stats(), nativeCache.estimatedSize());
+		}
 	});
 }
 ```
