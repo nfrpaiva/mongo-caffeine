@@ -12,8 +12,8 @@
 	<groupId>com.nfrpaiva</groupId>
 	<artifactId>mongo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>mongo</name>
-	<description>Demo project for Spring Boot</description>
+	<name>mongo-caffeine</name>
+	<description>Exemplo de cache em memória com Caffeine sobre um repositório Spring Data MongoDB</description>
 
 	<properties>
 		<java.version>25</java.version>

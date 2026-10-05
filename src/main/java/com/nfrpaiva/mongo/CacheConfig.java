@@ -31,7 +31,7 @@ public class CacheConfig {
 			.newBuilder()
 			.expireAfterAccess(Duration.ofMinutes(2))
 			.maximumSize(10_000)
-			//.recordStats()
+			.recordStats()
 			.build();
 	}
 
